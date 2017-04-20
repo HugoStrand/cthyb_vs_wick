@@ -28,7 +28,7 @@ class G2ConstiwPlot:
     def draw(self, ax, n_ticks = 6, **kwargs):
         extent = min(self.mesh_nu1), max(self.mesh_nu1), min(self.mesh_nu2), max(self.mesh_nu2)
         opts = {'origin': 'lower', 'cmap': matplotlib.cm.RdBu, 'aspect': 'auto',
-                'interpolation': 'none', 'vmin': -self.max_absval, 'vmax':self.max_absval,
+                'interpolation': 'nearest', 'vmin': -self.max_absval, 'vmax':self.max_absval,
                 'extent': extent}
         opts.update(kwargs)
         handle = ax.imshow(self.data.transpose(), **opts)
