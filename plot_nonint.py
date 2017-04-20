@@ -2,7 +2,7 @@ import matplotlib, sys, numpy as np, itertools as itt
 matplotlib.use("pdf")
 from matplotlib import pyplot as plt
 from pytriqs.archive import HDFArchive
-from pytriqs.gf.local import GfImTime, GfImFreq, BlockGf
+from pytriqs.gf import GfImTime, GfImFreq, BlockGf
 from wick import G2_0
 from g2plot import G2ConstiwPlot, TraceInuInup, G2iwPlot
 

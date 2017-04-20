@@ -1,16 +1,14 @@
 import numpy as np, itertools as itt, sys
-from pytriqs.gf.local import Block2Gf, MeshImFreq
-from pytriqs.gf.local.multivar import GfImFreq_x_ImFreq_x_ImFreqTv4, MeshImFreqImFreqImFreq
-
+from pytriqs.gf import Gf, MeshProduct, Block2Gf, MeshImFreq
 
 class G2_0(Block2Gf):
     def __init__(self, g1_inu, n_iw, n_inu, blocks_to_calculate = [], blockstructure_to_compare_with = "AABB"):
         """
         g1_inu has to be a BlockGf of GfImFreq
         """
-        mb = MeshImFreq(g1_inu.beta, "Boson", n_iw)
-        mf = MeshImFreq(g1_inu.beta, "Fermion", n_inu)
-        blockmesh = MeshImFreqImFreqImFreq(mb, mf, mf)
+        mb = MeshImFreq(g1_inu.mesh.beta, "Boson", n_iw)
+        mf = MeshImFreq(g1_inu.mesh.beta, "Fermion", n_inu)
+        blockmesh = MeshProduct(mb, mf, mf)
         blocks = []
         self.gf2_struct = dict()
         for i in g1_inu.indices:
@@ -19,12 +17,12 @@ class G2_0(Block2Gf):
                 blockindex = (i, j)
                 m, n = g1_inu[i].data.shape[1], g1_inu[j].data.shape[1]
                 blockshape = [m, m, n, n]
-                blocksR.append(GfImFreq_x_ImFreq_x_ImFreqTv4(blockmesh, blockshape))
+                blocksR.append(Gf(mesh=blockmesh, target_shape=blockshape))
                 self.gf2_struct[blockindex] = (m, n)
             blocks.append(blocksR)
         g1_indices = [i for i in g1_inu.indices]
         Block2Gf.__init__(self, g1_indices, g1_indices, blocks)
-        self.beta = g1_inu.beta
+        self.beta = g1_inu.mesh.beta
         # mesh adjustments for negative frequencies and g1/g2 mesh-offsets
         self.n_iw = len(mb)
         self.n_inu = len(mf)
@@ -38,7 +36,7 @@ class G2_0(Block2Gf):
         if len(blocks_to_calculate) == 0:
             blocks_to_calculate = self.indices
         self.blockstruct = blockstructure_to_compare_with
-        contractions = {"direct": [1,0,3,2], "exchange": [1,2,3,0]}
+        contractions = {"direct": [1,0,3,2], "exchange": [1,2,3,0]}        
         for blockindex in blocks_to_calculate:
             self.set_block(g1_inu, blockindex, contractions)
 

@@ -1,6 +1,5 @@
 import numpy as np, matplotlib, itertools as itt
-from pytriqs.gf.local import Block2Gf, GfImFreqTv4
-
+from pytriqs.gf import Block2Gf, GfImFreq
 
 class G2ConstiwPlot:
     def __init__(self, g2, bosonic_frequency_to_plot = 0):
@@ -67,7 +66,7 @@ class TraceInuInup(Block2Gf):
         self.beta = g2block0.mesh.components[0].beta
         for n, m in itt.product(n1, n2):
             assert g2[(n, m)].data.shape[3] == g2[(n, m)].data.shape[4] == g2[(n, m)].data.shape[5] == g2[(n, m)].data.shape[6], 'blockstructure not supported (TODO), blocksizes have to equal each other'
-        Block2Gf.__init__(self, n1, n2, [[GfImFreqTv4(g2[(n, m)].mesh.components[0], g2[(n, m)].data.shape[3:]) for m in n2] for n in n1])
+        Block2Gf.__init__(self, n1, n2, [[GfImFreq(mesh=g2[(n, m)].mesh.components[0], target_shape=g2[(n, m)].data.shape[3:]) for m in n2] for n in n1])
         self.perform_trace(g2)
 
     def perform_trace(self, g2):
